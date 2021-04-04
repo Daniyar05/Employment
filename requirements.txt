@@ -1,5 +1,4 @@
 from flask import Flask, render_template, session, make_response, redirect, request, abort
-from data import db_session, __all_models, users_api
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import datetime
 import sqlalchemy
