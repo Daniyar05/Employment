@@ -1,4 +1,9 @@
 datetime
 sqlalchemy
-sqlalchemy_serializer
 flask
+sqlalchemy_serializer
+flask_login
+requests
+werkzeug
+flask_wtf
+wtforms
