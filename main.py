@@ -5,6 +5,7 @@ from data.users import User
 from data.jobs import Jobs
 from data.employment import Employment
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+import os
 
 
 app = Flask(__name__)
