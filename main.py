@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 @app.route("/")
 def index():
-    return "Привет от приложения Flask"
+    return "Привет от приложения Flask, os"
 
 
 if __name__ == '__main__':
