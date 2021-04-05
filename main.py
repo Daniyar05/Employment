@@ -2,11 +2,9 @@ from flask import Flask, render_template, session, make_response, redirect, requ
 from data import db_session, __all_models, users_api
 from forms.user import RegisterForm, LoginForm, JobsForm
 from data.users import User
-from data.jobs import Jobs
-from data.employment import Employment
+from data.employment import Employment as Jobs
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import os
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -34,11 +32,6 @@ def server():
         a[str(i.id)] = i.name
     for item in works:
         item.user = a[item.team_leader]
-        s = []
-        for i in str(item.collaborators).split(', '):
-            if i in a:
-                s.append(a[i])
-        item.party = ', '.join(s)
         db_sess.add(item)
         db_sess.commit()
     return render_template("work.html", works=works)
@@ -47,7 +40,6 @@ def server():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
@@ -99,12 +91,10 @@ def addjob():
             team_leader=db_sess.query(User).filter(User.name == current_user.name).first().id,
             email=form.email.data,
             job=form.job.data,
-            age=form.age.data,
+            experience=form.experience.data,
             work_size=form.work_size.data,
-            collaborators=form.collaborators.data,
-            start_date=form.start_date.data,
-            end_date=form.end_date.data,
-            is_finished=form.is_finished.data
+            start_time=form.start_time.data,
+            end_time=form.end_time.data,
         )
         db_sess.add(jobs)
         db_sess.commit()
@@ -131,12 +121,10 @@ def edit_job(id):
             if jobs:
                 form.job.data = jobs.job
                 form.work_size.data = jobs.work_size
-                form.age.data = jobs.age
+                form.experience.data = jobs.experience
                 form.email.data = jobs.email
-                form.collaborators.data = jobs.collaborators
-                form.start_date.data = jobs.start_date
-                form.end_date.data = jobs.end_date
-                form.is_finished.data = jobs.is_finished
+                form.start_time.data = jobs.start_time
+                form.end_time.data = jobs.end_time
             else:
                 abort(404)
         except:
@@ -148,12 +136,10 @@ def edit_job(id):
         if jobs:
             jobs.job = form.job.data
             jobs.work_size = form.work_size.data
-            jobs.age = form.age.data
+            jobs.experience = form.experience.data
             jobs.email = form.email.data
-            jobs.collaborators = form.collaborators.data
-            jobs.start_date = form.start_date.data
-            jobs.end_date = form.end_date.data
-            jobs.is_finished = form.is_finished.data
+            jobs.start_time = form.start_time.data
+            jobs.end_time = form.end_time.data
             db_sess.commit()
             return redirect('/')
         else:
