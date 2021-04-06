@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, make_response, redirect, request, abort
-from data import db_session, __all_models, users_api
+from data import db_session, __all_models, users_api, jobs_api
 from forms.user import RegisterForm, LoginForm, JobsForm
 from data.users import User
 from data.employment import Employment as Jobs
@@ -183,6 +183,7 @@ def logout():
 
 if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
+    app.register_blueprint(jobs_api.blueprint)
     app.register_blueprint(users_api.blueprint)
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
