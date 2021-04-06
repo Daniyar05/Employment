@@ -18,7 +18,8 @@ def users_api():
         return jsonify({'error': 'Not found'})
     return jsonify(
         {
-            'users': jobs.to_dict(only=('id', 'name', 'email', 'modified_date', 'about'))
+            'users': [item.to_dict(only=('id', 'name', 'email', 'modified_date', 'about'))
+                      for item in jobs]
         }
     )
 
