@@ -1,7 +1,6 @@
 from flask import jsonify, Blueprint, make_response
 from . import db_session
-from .jobs import Jobs
-from .news import News
+from .employment import Employment
 
 blueprint = Blueprint(
     'jobs_api',
@@ -11,13 +10,13 @@ blueprint = Blueprint(
 
 
 @blueprint.route('/api/jobs')
-def get_news():
+def get_jobs():
     db_sess = db_session.create_session()
-    jobs = db_sess.query(Jobs).all()
+    jobs = db_sess.query(Employment).all()
     return jsonify(
         {
-            'jobs':
-                [item.to_dict(only=('job', 'work_size', 'age', 'email', 'user', 'party', 'start_date', 'end_date', 'is_finished'))
+            'employment':
+                [item.to_dict(only=('job', 'work_size', 'employment', 'email', 'user', 'start_time', 'end_time', 'id'))
                  for item in jobs]
         }
     )
@@ -26,11 +25,11 @@ def get_news():
 @blueprint.route('/api/jobs/<int:jobs_id>', methods=['GET'])
 def get_one_jobs(jobs_id):
     db_sess = db_session.create_session()
-    jobs = db_sess.query(Jobs).get(jobs_id)
+    jobs = db_sess.query(Employment).get(jobs_id)
     if not jobs:
         return jsonify({'error': 'Not found'})
     return jsonify(
         {
-            'jobs': jobs.to_dict(only=('job', 'work_size', 'age', 'email', 'user', 'party', 'start_date', 'end_date', 'is_finished'))
+            'jobs': jobs.to_dict(only=('job', 'work_size', 'employment', 'email', 'user', 'start_time', 'end_time', 'id'))
         }
     )
