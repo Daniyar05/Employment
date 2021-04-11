@@ -27,14 +27,17 @@ def server():
     db_session.global_init("db/blogs.db")
     db_sess = db_session.create_session()
     works = db_sess.query(Jobs).all()
+    admin = ''
     for i in db_sess.query(User).all():
+        if i.id == 1:
+            admin = i.name
         a[i.id] = i.name
         a[str(i.id)] = i.name
     for item in works:
         item.user = a[item.team_leader]
         db_sess.add(item)
         db_sess.commit()
-    return render_template("work.html", works=works)
+    return render_template("work.html", works=works, admin=admin)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -50,7 +53,11 @@ def register():
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
-                                   message="Такой пользователь уже есть")
+                                   message="Пользователь с такой почтой уже есть")
+        if db_sess.query(User).filter(User.name == form.name.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Пользователь с таким именем уже есть")
         user = User(
             name=form.name.data,
             email=form.email.data,
@@ -109,7 +116,7 @@ def edit_job(id):
     if request.method == "GET":
         db_sess = db_session.create_session()
         try:
-            if id == 1:
+            if db_sess.query(User).filter(User.id == 1).first().name == current_user.name:
                 jobs = db_sess.query(Jobs).filter(Jobs.id == id).first()
             else:
                 if db_sess.query(User).filter(User.id ==
@@ -155,7 +162,7 @@ def edit_job(id):
 def job_delete(id):
     db_sess = db_session.create_session()
     try:
-        if id == 1:
+        if db_sess.query(User).filter(User.id == 1).first().name == current_user.name:
             jobs = db_sess.query(Jobs).filter(Jobs.id == id).first()
         else:
             if db_sess.query(User).filter(User.id ==
@@ -167,6 +174,37 @@ def job_delete(id):
         if jobs:
             db_sess.delete(jobs)
             db_sess.commit()
+        else:
+            abort(404)
+        return redirect('/')
+    except:
+        abort(404)
+
+
+@app.route('/user_delete', methods=['GET', 'POST'])
+@login_required
+def users_delete():
+    db_sess = db_session.create_session()
+    users = db_sess.query(User).filter(User.id != 1).all()
+    admin = db_sess.query(User).filter(User.id == 1).first().name
+    return render_template('delete.html',
+                           title='Пользователи',
+                           users=users, admin=admin
+                           )
+
+
+@app.route('/user_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def user_delete(id):
+    db_sess = db_session.create_session()
+    try:
+        if current_user.name == db_sess.query(User).filter(User.id == 1).first().name:
+            if id == 1:
+                abort(404)
+            else:
+                user = db_sess.query(User).filter(User.id == id).first()
+                db_sess.delete(user)
+                db_sess.commit()
         else:
             abort(404)
         return redirect('/')
