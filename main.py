@@ -6,6 +6,7 @@ from data.employment import Employment as Jobs
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import os
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
@@ -226,3 +227,4 @@ if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
 
+# 433 строчки кода в сумме
